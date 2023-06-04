@@ -3,7 +3,7 @@
 import tkinter as tk
 from tkinter import ttk
 from ttkthemes import ThemedTk
-from user import add_user
+from users import add_user
 
 class UserScreen:
     def __init__(self, root):

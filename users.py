@@ -1,6 +1,7 @@
 # users.py
 
 import psycopg2
+from passlib.hash import pbkdf2_sha256
 
 DB_NAME = "Alpha"
 
@@ -13,12 +14,31 @@ conn = psycopg2.connect(
 )
 cur = conn.cursor()
 
-def add_user(username, hashed_password, role_id):
-    cur.execute("""
-        INSERT INTO Users (username, password, role_id)
-        VALUES (%s, %s, %s)
-    """, (username, hashed_password, role_id))
-    conn.commit()
+def add_user(username, password, email, role_name):
+    hashed_password = pbkdf2_sha256.hash(password)
+
+    conn = None
+    try:
+        conn = psycopg2.connect()
+        cur = conn.cursor()
+
+        cur.execute("""
+            SELECT id 
+            FROM Roles 
+            WHERE name = %s
+        """, (role_name,))
+
+        role_id = cur.fetchone()[0]
+
+        cur.execute("""
+            INSERT INTO Users (username, password, email, role_id) 
+            VALUES (%s, %s, %s, %s)
+        """, (username, hashed_password, email, role_id))
+
+        conn.commit()
+    finally:
+        if conn is not None:
+            conn.close()
 
 def update_user(username, hashed_password, role_id):
     cur.execute("""

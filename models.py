@@ -17,15 +17,13 @@ cur = conn.cursor()
 
 # Create User table
 cur.execute("""
-    CREATE TABLE IF NOT EXISTS Users(
+    CREATE TABLE IF NOT EXISTS Users (
         id SERIAL PRIMARY KEY,
-        username VARCHAR(255) UNIQUE NOT NULL,
+        username VARCHAR(255) NOT NULL UNIQUE,
         password VARCHAR(255) NOT NULL,
-        role_id INTEGER,
         email VARCHAR(255) NOT NULL UNIQUE,
-        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-        last_login TIMESTAMP,
-        FOREIGN KEY(role_id) REFERENCES Roles(id)
+        role_id INT,
+        FOREIGN KEY (role_id) REFERENCES Roles (id)
     )
 """)
 
